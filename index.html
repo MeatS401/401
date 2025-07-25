@@ -1,0 +1,313 @@
+出入库登记、仪器设备统计及仪器配件标签页<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实验室智能管理系统</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <div class="top-nav">
+        <h1 class="system-title">
+            <i class="fas fa-flask"></i>
+            实验室智能管理系统
+        </h1>
+        <!-- 导航标签 -->
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="reagents-tab" data-bs-toggle="tab" data-bs-target="#reagents" type="button">
+                    <i class="fas fa-vial"></i>试剂耗材统计
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="inventory-tab" data-bs-toggle="tab" data-bs-target="#inventory" type="button">
+                    <i class="fas fa-warehouse"></i>出入库登记
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="equipment-tab" data-bs-toggle="tab" data-bs-target="#equipment" type="button">
+                    <i class="fas fa-microscope"></i>仪器设备统计
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="accessories-tab" data-bs-toggle="tab" data-bs-target="#accessories" type="button">
+                    <i class="fas fa-tools"></i>仪器配件
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="analysis-tab" data-bs-toggle="tab" data-bs-target="#analysis" type="button">
+                    <i class="fas fa-chart-bar"></i>统计分析
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 主要内容区域 -->
+    <div class="main-content">
+        <div class="tab-content" id="myTabContent">
+            <!-- 试剂耗材统计 -->
+            <div class="tab-pane fade show active" id="reagents" role="tabpanel">
+                <div class="table-container">
+                    <div class="btn-group">
+                        <button class="btn btn-primary action-btn" onclick="importCSV('reagents')">
+                            <i class="fas fa-file-import"></i> 导入CSV
+                        </button>
+                        <button class="btn btn-success action-btn" onclick="showAddModal('reagents')">
+                            <i class="fas fa-plus"></i> 添加记录
+                        </button>
+                    </div>
+                    <div class="search-box">
+                        <input type="text" placeholder="搜索..." onkeyup="searchTable('reagents')">
+                    </div>
+                    <table class="table table-hover" id="reagentsTable">
+                        <thead>
+                            <tr>
+                                <th>试剂/耗材名称</th>
+                                <th>品牌</th>
+                                <th>规格</th>
+                                <th>采购时间</th>
+                                <th>有效期</th>
+                                <th>单价</th>
+                                <th>存放位置</th>
+                                <th>库存总量</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 出入库登记 -->
+            <div class="tab-pane fade" id="inventory" role="tabpanel">
+                <div class="table-container">
+                    <div class="btn-group">
+                        <button class="btn btn-primary action-btn" onclick="importCSV('inventory')">
+                            <i class="fas fa-file-import"></i> 导入CSV
+                        </button>
+                        <button class="btn btn-success action-btn" onclick="showInventoryModal('in')">
+                            <i class="fas fa-arrow-down"></i> 入库登记
+                        </button>
+                        <button class="btn btn-warning action-btn" onclick="showInventoryModal('out')">
+                            <i class="fas fa-arrow-up"></i> 出库登记
+                        </button>
+                    </div>
+                    <div class="search-box">
+                        <input type="text" placeholder="搜索..." onkeyup="searchTable('inventory')">
+                    </div>
+                    <table class="table table-hover" id="inventoryTable">
+                        <thead>
+                            <tr>
+                                <th>名称</th>
+                                <th>入库时间</th>
+                                <th>入库数量</th>
+                                <th>入库人</th>
+                                <th>出库时间</th>
+                                <th>出库数量</th>
+                                <th>使用人</th>
+                                <th>库存总量</th>
+                                <th>存放位置</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 仪器设备统计 -->
+            <div class="tab-pane fade" id="equipment" role="tabpanel">
+                <div class="table-container">
+                    <div class="btn-group">
+                        <button class="btn btn-primary action-btn" onclick="importCSV('equipment')">
+                            <i class="fas fa-file-import"></i> 导入CSV
+                        </button>
+                        <button class="btn btn-success action-btn" onclick="showAddModal('equipment')">
+                            <i class="fas fa-plus"></i> 添加记录
+                        </button>
+                    </div>
+                    <div class="search-box">
+                        <input type="text" placeholder="搜索..." onkeyup="searchTable('equipment')">
+                    </div>
+                    <table class="table table-hover" id="equipmentTable">
+                        <thead>
+                            <tr>
+                                <th>资产编号</th>
+                                <th>仪器名称</th>
+                                <th>品牌</th>
+                                <th>仪器型号</th>
+                                <th>存放地点</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 仪器配件 -->
+            <div class="tab-pane fade" id="accessories" role="tabpanel">
+                <div class="table-container">
+                    <div class="btn-group">
+                        <button class="btn btn-primary action-btn" onclick="importCSV('accessories')">
+                            <i class="fas fa-file-import"></i> 导入CSV
+                        </button>
+                        <button class="btn btn-success action-btn" onclick="showAddModal('accessories')">
+                            <i class="fas fa-plus"></i> 添加记录
+                        </button>
+                    </div>
+                    <div class="search-box">
+                        <input type="text" placeholder="搜索..." onkeyup="searchTable('accessories')">
+                    </div>
+                    <table class="table table-hover" id="accessoriesTable">
+                        <thead>
+                            <tr>
+                                <th>仪器</th>
+                                <th>配件名称</th>
+                                <th>库存个数</th>
+                                <th>存放位置</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 统计分析 -->
+            <div class="tab-pane fade" id="analysis" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="statistics-card">
+                            <h4>试剂耗材库存统计</h4>
+                            <div class="chart-container" id="reagentsChart"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="statistics-card">
+                            <h4>设备使用情况统计</h4>
+                            <div class="chart-container" id="equipmentChart"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加/编辑记录的模态框 -->
+    <div class="modal fade" id="recordModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">添加记录</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="recordForm">
+                        <input type="hidden" id="editId">
+                        <div class="mb-3">
+                            <label class="form-label">名称</label>
+                            <input type="text" class="form-control" id="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">规格</label>
+                            <input type="text" class="form-control" id="specification" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">数量</label>
+                            <input type="number" class="form-control" id="quantity" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">单位</label>
+                            <input type="text" class="form-control" id="unit" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">存放位置</label>
+                            <input type="text" class="form-control" id="location" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="saveRecord()">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 出入库登记模态框 -->
+    <div class="modal fade" id="inventoryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="inventoryModalTitle">入库登记</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="inventoryForm">
+                        <input type="hidden" id="inventoryType" name="inventoryType">
+                        <!-- 入库表单区域 -->
+                        <div id="inFormArea">
+                            <div class="mb-3">
+                                <label class="form-label">入库名称</label>
+                                <input type="text" class="form-control" id="inName" name="inName">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">入库时间</label>
+                                <input type="date" class="form-control" id="inTime" name="inTime">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">入库数量</label>
+                                <input type="number" class="form-control" id="inQuantity" name="inQuantity">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">入库人</label>
+                                <input type="text" class="form-control" id="inPerson" name="inPerson">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">存放位置</label>
+                                <input type="text" class="form-control" id="inLocation" name="inLocation">
+                            </div>
+                        </div>
+                        <!-- 出库表单区域 -->
+                        <div id="outFormArea">
+                            <div class="mb-3">
+                                <label class="form-label">出库名称</label>
+                                <input type="text" class="form-control" id="outName" name="outName">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">出库时间</label>
+                                <input type="date" class="form-control" id="outTime" name="outTime">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">出库数量</label>
+                                <input type="number" class="form-control" id="outQuantity" name="outQuantity">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">出库人</label>
+                                <input type="text" class="form-control" id="outPerson" name="outPerson">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">存放位置</label>
+                                <input type="text" class="form-control" id="outLocation" name="outLocation">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="saveInventoryRecord()">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.3.0/echarts.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html> 

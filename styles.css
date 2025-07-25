@@ -1,0 +1,243 @@
+/* 全局样式 */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Microsoft YaHei', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* 顶部导航栏 */
+.top-nav {
+    background-color: #3474c5;
+    padding: 15px 0;
+    color: white;
+}
+
+.system-title {
+    color: white;
+    margin: 0;
+    padding: 0 20px;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+}
+
+.system-title i {
+    margin-right: 10px;
+    font-size: 28px;
+    color: #8ab4e8;
+}
+
+/* 导航标签样式 */
+.nav-tabs {
+    background-color: #3474c5;
+    border: none;
+    padding: 0 20px;
+}
+
+.nav-tabs .nav-link {
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-right: 5px;
+    border-radius: 0;
+    transition: all 0.3s ease;
+    opacity: 0.8;
+}
+
+.nav-tabs .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    opacity: 1;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: #4c8ad2;
+    color: white;
+    opacity: 1;
+}
+
+.nav-tabs .nav-link i {
+    margin-right: 8px;
+}
+
+/* 主要内容区域 */
+.main-content {
+    padding: 20px;
+}
+
+/* 表格容器样式 */
+.table-container {
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-top: 20px;
+}
+
+/* 表格样式 */
+.table {
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    color: #333;
+    font-weight: bold;
+    text-align: center;
+    padding: 12px;
+}
+
+.table tbody td {
+    vertical-align: middle;
+    padding: 12px;
+    text-align: center;
+}
+
+/* 按钮样式 */
+.btn-group {
+    margin: 20px 0;
+}
+
+.action-btn {
+    padding: 8px 20px;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin: 0 5px;
+}
+
+.btn-primary {
+    background-color: #3474c5;
+    border-color: #3474c5;
+}
+
+.btn-primary:hover {
+    background-color: #2861a8;
+    border-color: #2861a8;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #218838;
+}
+
+/* 操作按钮样式 */
+.action-buttons {
+    white-space: nowrap;
+}
+
+.action-buttons .btn {
+    padding: 5px 10px;
+    margin: 0 2px;
+}
+
+/* 搜索框样式 */
+.search-box {
+    float: right;
+    margin-bottom: 15px;
+}
+
+.search-box input {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 200px;
+}
+
+/* 统计分析卡片样式 */
+.statistics-card {
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin: 15px 0;
+}
+
+.chart-container {
+    height: 300px;
+    margin: 20px 0;
+}
+
+/* 模态框样式 */
+.modal-content {
+    border-radius: 5px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+    background-color: #3474c5;
+    color: white;
+    border-radius: 5px 5px 0 0;
+    padding: 15px 20px;
+}
+
+.modal-title {
+    font-weight: bold;
+    margin: 0;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.form-label {
+    color: #333;
+    font-weight: 500;
+}
+
+.form-control {
+    border-radius: 4px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+}
+
+.form-control:focus {
+    border-color: #3474c5;
+    box-shadow: 0 0 0 0.2rem rgba(52, 116, 197, 0.25);
+}
+
+/* 预警列表样式 */
+.warning-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.warning-item {
+    padding: 15px;
+    border-left: 4px solid #e74c3c;
+    margin-bottom: 10px;
+    background-color: #fff;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.warning-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* 响应式布局调整 */
+@media (max-width: 768px) {
+    .nav-tabs .nav-link {
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+    
+    .table-container {
+        padding: 10px;
+    }
+    
+    .statistics-card {
+        margin: 10px 0;
+    }
+    
+    .chart-container {
+        height: 250px;
+    }
+} 
