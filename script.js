@@ -1,617 +1,313 @@
-// 全局变量
-let currentTab = 'reagents';
-let recordModal;
-let data = {
-    reagents: [],
-    inventory: [],
-    equipment: [],
-    accessories: []
-};
+出入库登记、仪器设备统计及仪器配件标签页<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实验室智能管理系统</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <div class="top-nav">
+        <h1 class="system-title">
+            <i class="fas fa-flask"></i>
+            实验室智能管理系统
+        </h1>
+        <!-- 导航标签 -->
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="reagents-tab" data-bs-toggle="tab" data-bs-target="#reagents" type="button">
+                    <i class="fas fa-vial"></i>试剂耗材统计
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="inventory-tab" data-bs-toggle="tab" data-bs-target="#inventory" type="button">
+                    <i class="fas fa-warehouse"></i>出入库登记
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="equipment-tab" data-bs-toggle="tab" data-bs-target="#equipment" type="button">
+                    <i class="fas fa-microscope"></i>仪器设备统计
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="accessories-tab" data-bs-toggle="tab" data-bs-target="#accessories" type="button">
+                    <i class="fas fa-tools"></i>仪器配件
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="analysis-tab" data-bs-toggle="tab" data-bs-target="#analysis" type="button">
+                    <i class="fas fa-chart-bar"></i>统计分析
+                </button>
+            </li>
+        </ul>
+    </div>
 
-// 页面加载完成后初始化
-document.addEventListener('DOMContentLoaded', function() {
-    // 初始化Bootstrap模态框
-    recordModal = new bootstrap.Modal(document.getElementById('recordModal'));
-    
-    // 从localStorage加载数据
-    loadDataFromStorage();
-    
-    // 为标签页切换添加事件监听
-    document.querySelectorAll('.nav-link').forEach(tab => {
-        tab.addEventListener('click', function() {
-            currentTab = this.id.replace('-tab', '');
-            updateModalFields(); // 切换标签页时更新模态框字段
-        });
-    });
-    
-    // 初始化图表
-    initCharts();
+    <!-- 主要内容区域 -->
+    <div class="main-content">
+        <div class="tab-content" id="myTabContent">
+            <!-- 试剂耗材统计 -->
+            <div class="tab-pane fade show active" id="reagents" role="tabpanel">
+                <div class="table-container">
+                    <div class="btn-group">
+                        <button class="btn btn-primary action-btn" onclick="importCSV('reagents')">
+                            <i class="fas fa-file-import"></i> 导入CSV
+                        </button>
+                        <button class="btn btn-success action-btn" onclick="showAddModal('reagents')">
+                            <i class="fas fa-plus"></i> 添加记录
+                        </button>
+                    </div>
+                    <div class="search-box">
+                        <input type="text" placeholder="搜索..." onkeyup="searchTable('reagents')">
+                    </div>
+                    <table class="table table-hover" id="reagentsTable">
+                        <thead>
+                            <tr>
+                                <th>试剂/耗材名称</th>
+                                <th>品牌</th>
+                                <th>规格</th>
+                                <th>采购时间</th>
+                                <th>有效期</th>
+                                <th>单价</th>
+                                <th>存放位置</th>
+                                <th>库存总量</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
 
-    // 页面加载后默认隐藏出库表单区域
-    var outArea = document.getElementById('outFormArea');
-    if (outArea) outArea.style.display = 'none';
-});
+            <!-- 出入库登记 -->
+            <div class="tab-pane fade" id="inventory" role="tabpanel">
+                <div class="table-container">
+                    <div class="btn-group">
+                        <button class="btn btn-primary action-btn" onclick="importCSV('inventory')">
+                            <i class="fas fa-file-import"></i> 导入CSV
+                        </button>
+                        <button class="btn btn-success action-btn" onclick="showInventoryModal('in')">
+                            <i class="fas fa-arrow-down"></i> 入库登记
+                        </button>
+                        <button class="btn btn-warning action-btn" onclick="showInventoryModal('out')">
+                            <i class="fas fa-arrow-up"></i> 出库登记
+                        </button>
+                    </div>
+                    <div class="search-box">
+                        <input type="text" placeholder="搜索..." onkeyup="searchTable('inventory')">
+                    </div>
+                    <table class="table table-hover" id="inventoryTable">
+                        <thead>
+                            <tr>
+                                <th>名称</th>
+                                <th>入库时间</th>
+                                <th>入库数量</th>
+                                <th>入库人</th>
+                                <th>出库时间</th>
+                                <th>出库数量</th>
+                                <th>使用人</th>
+                                <th>库存总量</th>
+                                <th>存放位置</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
 
-// 从localStorage加载数据
-function loadDataFromStorage() {
-    const storedData = localStorage.getItem('labManagementData');
-    if (storedData) {
-        data = JSON.parse(storedData);
-        updateTables();
-    }
-}
+            <!-- 仪器设备统计 -->
+            <div class="tab-pane fade" id="equipment" role="tabpanel">
+                <div class="table-container">
+                    <div class="btn-group">
+                        <button class="btn btn-primary action-btn" onclick="importCSV('equipment')">
+                            <i class="fas fa-file-import"></i> 导入CSV
+                        </button>
+                        <button class="btn btn-success action-btn" onclick="showAddModal('equipment')">
+                            <i class="fas fa-plus"></i> 添加记录
+                        </button>
+                    </div>
+                    <div class="search-box">
+                        <input type="text" placeholder="搜索..." onkeyup="searchTable('equipment')">
+                    </div>
+                    <table class="table table-hover" id="equipmentTable">
+                        <thead>
+                            <tr>
+                                <th>资产编号</th>
+                                <th>仪器名称</th>
+                                <th>品牌</th>
+                                <th>仪器型号</th>
+                                <th>存放地点</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
 
-// 保存数据到localStorage
-function saveDataToStorage() {
-    localStorage.setItem('labManagementData', JSON.stringify(data));
-}
+            <!-- 仪器配件 -->
+            <div class="tab-pane fade" id="accessories" role="tabpanel">
+                <div class="table-container">
+                    <div class="btn-group">
+                        <button class="btn btn-primary action-btn" onclick="importCSV('accessories')">
+                            <i class="fas fa-file-import"></i> 导入CSV
+                        </button>
+                        <button class="btn btn-success action-btn" onclick="showAddModal('accessories')">
+                            <i class="fas fa-plus"></i> 添加记录
+                        </button>
+                    </div>
+                    <div class="search-box">
+                        <input type="text" placeholder="搜索..." onkeyup="searchTable('accessories')">
+                    </div>
+                    <table class="table table-hover" id="accessoriesTable">
+                        <thead>
+                            <tr>
+                                <th>仪器</th>
+                                <th>配件名称</th>
+                                <th>库存个数</th>
+                                <th>存放位置</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
 
-// 显示添加记录模态框
-function showAddModal(type) {
-    $('#recordForm')[0].reset();
-    updateModalFields(type);
-    document.getElementById('editId').value = '';
-    document.querySelector('.modal-title').textContent = '添加记录';
-    recordModal.show();
-}
+            <!-- 统计分析 -->
+            <div class="tab-pane fade" id="analysis" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="statistics-card">
+                            <h4>试剂耗材库存统计</h4>
+                            <div class="chart-container" id="reagentsChart"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="statistics-card">
+                            <h4>设备使用情况统计</h4>
+                            <div class="chart-container" id="equipmentChart"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-// 更新模态框字段
-function updateModalFields(type) {
-    // 如果传入了type参数，则更新currentTab
-    if (type) {
-        currentTab = type;
-    }
-    
-    const form = document.getElementById('recordForm');
-    form.innerHTML = ''; // 清空表单
-    
-    let fields = [];
-    switch(currentTab) {
-        case 'reagents':
-            fields = [
-                { id: 'name', label: '试剂/耗材名称', type: 'text' },
-                { id: 'brand', label: '品牌', type: 'text' },
-                { id: 'specification', label: '规格', type: 'text' },
-                { id: 'purchaseDate', label: '采购时间', type: 'date' },
-                { id: 'expiryDate', label: '有效期', type: 'date' },
-                { id: 'price', label: '单价', type: 'number' },
-                { id: 'location', label: '存放位置', type: 'text' },
-                { id: 'quantity', label: '库存总量', type: 'number' }
-            ];
-            break;
-        case 'inventory':
-            fields = [
-                { id: 'name', label: '名称', type: 'text' },
-                { id: 'inDate', label: '入库时间', type: 'date' },
-                { id: 'inQuantity', label: '入库数量', type: 'number' },
-                { id: 'inPerson', label: '入库人', type: 'text' },
-                { id: 'outDate', label: '出库时间', type: 'date' },
-                { id: 'outQuantity', label: '出库数量', type: 'number' },
-                { id: 'outPerson', label: '使用人', type: 'text' },
-                { id: 'totalQuantity', label: '库存总量', type: 'number' },
-                { id: 'location', label: '存放位置', type: 'text' }
-            ];
-            break;
-        case 'equipment':
-            fields = [
-                { id: 'assetId', label: '资产编号', type: 'text' },
-                { id: 'name', label: '仪器名称', type: 'text' },
-                { id: 'brand', label: '品牌', type: 'text' },
-                { id: 'model', label: '仪器型号', type: 'text' },
-                { id: 'location', label: '存放地点', type: 'text' }
-            ];
-            break;
-        case 'accessories':
-            fields = [
-                { id: 'equipment', label: '仪器', type: 'text' },
-                { id: 'name', label: '配件名称', type: 'text' },
-                { id: 'quantity', label: '库存个数', type: 'number' },
-                { id: 'location', label: '存放位置', type: 'text' }
-            ];
-            break;
-    }
-    
-    // 添加隐藏的ID字段
-    const hiddenId = document.createElement('input');
-    hiddenId.type = 'hidden';
-    hiddenId.id = 'editId';
-    form.appendChild(hiddenId);
-    
-    // 创建表单字段
-    fields.forEach(field => {
-        const div = document.createElement('div');
-        div.className = 'mb-3';
-        
-        const label = document.createElement('label');
-        label.className = 'form-label';
-        label.textContent = field.label;
-        
-        const input = document.createElement('input');
-        input.type = field.type;
-        input.className = 'form-control';
-        input.id = field.id;
-        input.required = true;
-        if (field.type === 'number') {
-            input.min = '0'; // 限制最小值为0
-        }
-        
-        div.appendChild(label);
-        div.appendChild(input);
-        form.appendChild(div);
-    });
-}
+    <!-- 添加/编辑记录的模态框 -->
+    <div class="modal fade" id="recordModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">添加记录</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="recordForm">
+                        <input type="hidden" id="editId">
+                        <div class="mb-3">
+                            <label class="form-label">名称</label>
+                            <input type="text" class="form-control" id="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">规格</label>
+                            <input type="text" class="form-control" id="specification" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">数量</label>
+                            <input type="number" class="form-control" id="quantity" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">单位</label>
+                            <input type="text" class="form-control" id="unit" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">存放位置</label>
+                            <input type="text" class="form-control" id="location" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="saveRecord()">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-// 保存记录
-function saveRecord() {
-    const form = document.getElementById('recordForm');
-    if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
-    }
+    <!-- 出入库登记模态框 -->
+    <div class="modal fade" id="inventoryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="inventoryModalTitle">入库登记</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="inventoryForm">
+                        <input type="hidden" id="inventoryType" name="inventoryType">
+                        <!-- 入库表单区域 -->
+                        <div id="inFormArea">
+                            <div class="mb-3">
+                                <label class="form-label">入库名称</label>
+                                <input type="text" class="form-control" id="inName" name="inName">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">入库时间</label>
+                                <input type="date" class="form-control" id="inTime" name="inTime">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">入库数量</label>
+                                <input type="number" class="form-control" id="inQuantity" name="inQuantity">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">入库人</label>
+                                <input type="text" class="form-control" id="inPerson" name="inPerson">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">存放位置</label>
+                                <input type="text" class="form-control" id="inLocation" name="inLocation">
+                            </div>
+                        </div>
+                        <!-- 出库表单区域 -->
+                        <div id="outFormArea">
+                            <div class="mb-3">
+                                <label class="form-label">出库名称</label>
+                                <input type="text" class="form-control" id="outName" name="outName">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">出库时间</label>
+                                <input type="date" class="form-control" id="outTime" name="outTime">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">出库数量</label>
+                                <input type="number" class="form-control" id="outQuantity" name="outQuantity">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">出库人</label>
+                                <input type="text" class="form-control" id="outPerson" name="outPerson">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">存放位置</label>
+                                <input type="text" class="form-control" id="outLocation" name="outLocation">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="saveInventoryRecord()">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    const record = {};
-    const inputs = form.querySelectorAll('input, select, textarea');
-    inputs.forEach(input => {
-        if (input.id) {
-            record[input.id] = input.value;
-        }
-    });
-    
-    const editId = document.getElementById('editId').value;
-    if (editId) {
-        // 编辑现有记录
-        const index = data[currentTab].findIndex(item => item.id === editId);
-        if (index !== -1) {
-            // 保留原有ID
-            record.id = editId;
-            data[currentTab][index] = record;
-        }
-    } else {
-        // 添加新记录
-        record.id = Date.now().toString();
-        data[currentTab].push(record);
-    }
-
-    saveDataToStorage();
-    updateTables();
-    recordModal.hide();
-}
-
-// 删除记录
-function deleteRecord(id) {
-    if (confirm('确定要删除这条记录吗？')) {
-        data[currentTab] = data[currentTab].filter(item => item.id !== id);
-        saveDataToStorage();
-        updateTables();
-    }
-}
-
-// 编辑记录
-function editRecord(id) {
-    const record = data[currentTab].find(item => item.id === id);
-    if (record) {
-        document.getElementById('editId').value = record.id;
-        updateModalFields(currentTab); // 先更新字段
-        
-        // 根据不同的标签页设置值
-        switch(currentTab) {
-            case 'reagents':
-                document.getElementById('name').value = record.name || '';
-                document.getElementById('brand').value = record.brand || '';
-                document.getElementById('specification').value = record.specification || '';
-                document.getElementById('purchaseDate').value = record.purchaseDate || '';
-                document.getElementById('expiryDate').value = record.expiryDate || '';
-                document.getElementById('price').value = record.price || '';
-                document.getElementById('location').value = record.location || '';
-                document.getElementById('quantity').value = record.quantity || '';
-                break;
-            case 'inventory':
-                document.getElementById('name').value = record.name || '';
-                document.getElementById('inDate').value = record.inDate || '';
-                document.getElementById('inQuantity').value = record.inQuantity || '';
-                document.getElementById('inPerson').value = record.inPerson || '';
-                document.getElementById('outDate').value = record.outDate || '';
-                document.getElementById('outQuantity').value = record.outQuantity || '';
-                document.getElementById('outPerson').value = record.outPerson || '';
-                document.getElementById('totalQuantity').value = record.totalQuantity || '';
-                document.getElementById('location').value = record.location || '';
-                break;
-            case 'equipment':
-                document.getElementById('assetId').value = record.assetId || '';
-                document.getElementById('name').value = record.name || '';
-                document.getElementById('brand').value = record.brand || '';
-                document.getElementById('model').value = record.model || '';
-                document.getElementById('location').value = record.location || '';
-                break;
-            case 'accessories':
-                document.getElementById('equipment').value = record.equipment || '';
-                document.getElementById('name').value = record.name || '';
-                document.getElementById('quantity').value = record.quantity || '';
-                document.getElementById('location').value = record.location || '';
-                break;
-        }
-        
-        document.querySelector('.modal-title').textContent = '编辑记录';
-        recordModal.show();
-    }
-}
-
-// 更新表格显示
-function updateTables() {
-    const tableIds = {
-        reagents: 'reagentsTable',
-        inventory: 'inventoryTable',
-        equipment: 'equipmentTable',
-        accessories: 'accessoriesTable'
-    };
-
-    Object.keys(tableIds).forEach(type => {
-        const table = document.getElementById(tableIds[type]);
-        if (table) {
-            const tbody = table.querySelector('tbody');
-            tbody.innerHTML = '';
-            
-            data[type].forEach(record => {
-                const tr = document.createElement('tr');
-                let cells = [];
-                
-                switch(type) {
-                    case 'reagents':
-                        cells = [
-                            record.name,
-                            record.brand,
-                            record.specification,
-                            record.purchaseDate,
-                            record.expiryDate,
-                            record.price,
-                            record.location,
-                            record.quantity
-                        ];
-                        break;
-                    case 'inventory':
-                        cells = [
-                            record.name,
-                            record.inDate,
-                            record.inQuantity,
-                            record.inPerson,
-                            record.outDate,
-                            record.outQuantity,
-                            record.outPerson,
-                            record.totalQuantity,
-                            record.location
-                        ];
-                        break;
-                    case 'equipment':
-                        cells = [
-                            record.assetId,
-                            record.name,
-                            record.brand,
-                            record.model,
-                            record.location
-                        ];
-                        break;
-                    case 'accessories':
-                        cells = [
-                            record.equipment,
-                            record.name,
-                            record.quantity,
-                            record.location
-                        ];
-                        break;
-                }
-                
-                // 添加数据单元格
-                cells.forEach(cell => {
-                    const td = document.createElement('td');
-                    td.textContent = cell || '';
-                    tr.appendChild(td);
-                });
-                
-                // 添加操作按钮
-                const actionTd = document.createElement('td');
-                actionTd.className = 'action-buttons';
-                actionTd.innerHTML = `
-                    <button class="btn btn-sm btn-primary" onclick="editRecord('${record.id}')">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger" onclick="deleteRecord('${record.id}')">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                `;
-                tr.appendChild(actionTd);
-                
-                tbody.appendChild(tr);
-            });
-        }
-    });
-
-    // 更新图表
-    updateCharts();
-}
-
-// 搜索表格
-function searchTable(type) {
-    const input = document.querySelector(`#${type} .search-box input`);
-    const filter = input.value.toLowerCase();
-    const table = document.getElementById(`${type}Table`);
-    const tr = table.getElementsByTagName('tr');
-
-    for (let i = 1; i < tr.length; i++) {
-        const td = tr[i].getElementsByTagName('td');
-        let txtValue = '';
-        for (let j = 0; j < td.length - 1; j++) {
-            txtValue += td[j].textContent || td[j].innerText;
-        }
-        if (txtValue.toLowerCase().indexOf(filter) > -1) {
-            tr[i].style.display = '';
-        } else {
-            tr[i].style.display = 'none';
-        }
-    }
-}
-
-// 导入CSV文件
-function importCSV(type) {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.csv';
-    input.onchange = function(e) {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            const csvData = event.target.result;
-            const records = parseCSV(csvData, type);
-            data[type] = records;
-            saveDataToStorage();
-            updateTables();
-        };
-        reader.readAsText(file);
-    };
-    input.click();
-}
-
-// 解析CSV数据
-function parseCSV(csvText, type) {
-    const lines = csvText.split('\n');
-    const records = [];
-    
-    // 跳过标题行
-    let startRow = 2; // 默认从第三行开始（跳过两行标题）
-    
-    for (let i = startRow; i < lines.length; i++) {
-        if (!lines[i].trim()) continue;
-        
-        const columns = lines[i].split(',').map(col => col.trim());
-        let record = { id: Date.now().toString() + i };
-        
-        switch(type) {
-            case 'reagents':
-                record = {
-                    ...record,
-                    name: columns[0] || '',
-                    brand: columns[1] || '',
-                    specification: columns[2] || '',
-                    purchaseDate: columns[3] || '',
-                    expiryDate: columns[4] || '',
-                    price: columns[5] || '',
-                    location: columns[6] || '',
-                    quantity: columns[7] || ''
-                };
-                break;
-            case 'inventory':
-                record = {
-                    ...record,
-                    name: columns[0] || '',
-                    inDate: columns[1] || '',
-                    inQuantity: columns[2] || '',
-                    inPerson: columns[3] || '',
-                    outDate: columns[4] || '',
-                    outQuantity: columns[5] || '',
-                    outPerson: columns[6] || '',
-                    totalQuantity: columns[7] || '',
-                    location: columns[8] || ''
-                };
-                break;
-            case 'equipment':
-                record = {
-                    ...record,
-                    assetId: columns[0] || '',
-                    name: columns[1] || '',
-                    brand: columns[2] || '',
-                    model: columns[3] || '',
-                    location: columns[4] || ''
-                };
-                break;
-            case 'accessories':
-                record = {
-                    ...record,
-                    equipment: columns[0] || '',
-                    name: columns[1] || '',
-                    quantity: columns[2] || '',
-                    location: columns[3] || ''
-                };
-                break;
-        }
-        
-        if (Object.values(record).some(value => value)) {
-            records.push(record);
-        }
-    }
-    
-    return records;
-}
-
-// 初始化图表
-function initCharts() {
-    // 初始化试剂耗材库存统计图表
-    const reagentsChart = echarts.init(document.getElementById('reagentsChart'));
-    const equipmentChart = echarts.init(document.getElementById('equipmentChart'));
-    
-    // 设置图表自适应
-    window.addEventListener('resize', function() {
-        reagentsChart.resize();
-        equipmentChart.resize();
-    });
-}
-
-// 更新图表数据
-function updateCharts() {
-    // 更新试剂耗材库存统计
-    const reagentsChart = echarts.init(document.getElementById('reagentsChart'));
-    const reagentsData = data.reagents.map(item => ({
-        name: item.name,
-        value: parseInt(item.quantity) || 0
-    }));
-    
-    reagentsChart.setOption({
-        title: {
-            text: '试剂耗材库存统计',
-            left: 'center'
-        },
-        tooltip: {
-            trigger: 'item',
-            formatter: '{b}: {c} ({d}%)'
-        },
-        series: [{
-            type: 'pie',
-            radius: '60%',
-            data: reagentsData,
-            emphasis: {
-                itemStyle: {
-                    shadowBlur: 10,
-                    shadowOffsetX: 0,
-                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                }
-            }
-        }]
-    });
-
-    // 更新设备使用情况统计
-    const equipmentChart = echarts.init(document.getElementById('equipmentChart'));
-    const locationData = {};
-    data.equipment.forEach(item => {
-        locationData[item.location] = (locationData[item.location] || 0) + 1;
-    });
-    
-    const equipmentData = Object.entries(locationData).map(([location, count]) => ({
-        name: location,
-        value: count
-    }));
-    
-    equipmentChart.setOption({
-        title: {
-            text: '设备存放位置分布',
-            left: 'center'
-        },
-        tooltip: {
-            trigger: 'item',
-            formatter: '{b}: {c}台设备'
-        },
-        series: [{
-            type: 'pie',
-            radius: '60%',
-            data: equipmentData,
-            emphasis: {
-                itemStyle: {
-                    shadowBlur: 10,
-                    shadowOffsetX: 0,
-                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                }
-            }
-        }]
-    });
-} 
-
-// 出入库登记模态框切换与保存逻辑
-function showInventoryModal(type) {
-    document.getElementById('inventoryType').value = type;
-    if (type === 'in') {
-        document.getElementById('inventoryModalTitle').textContent = '入库登记';
-        document.getElementById('inFormArea').style.display = '';
-        document.getElementById('outFormArea').style.display = 'none';
-        // 清空入库表单
-        document.getElementById('inName').value = '';
-        document.getElementById('inTime').value = '';
-        document.getElementById('inQuantity').value = '';
-        document.getElementById('inPerson').value = '';
-        document.getElementById('inLocation').value = '';
-    } else {
-        document.getElementById('inventoryModalTitle').textContent = '出库登记';
-        document.getElementById('inFormArea').style.display = 'none';
-        document.getElementById('outFormArea').style.display = '';
-        // 清空出库表单
-        document.getElementById('outName').value = '';
-        document.getElementById('outTime').value = '';
-        document.getElementById('outQuantity').value = '';
-        document.getElementById('outPerson').value = '';
-        document.getElementById('outLocation').value = '';
-    }
-    // 显示模态框
-    var modal = new bootstrap.Modal(document.getElementById('inventoryModal'));
-    modal.show();
-}
-
-function saveInventoryRecord() {
-    var type = document.getElementById('inventoryType').value;
-    var inventoryRecords = data.inventory.filter(item => item.name === (type === 'in' ? document.getElementById('inName').value.trim() : document.getElementById('outName').value.trim()));
-    var currentTotal = inventoryRecords.reduce((sum, item) => sum + parseInt(item.totalQuantity || 0), 0);
-
-    if (type === 'in') {
-        var name = document.getElementById('inName').value.trim();
-        var time = document.getElementById('inTime').value;
-        var quantity = document.getElementById('inQuantity').value.trim();
-        var person = document.getElementById('inPerson').value.trim();
-        var location = document.getElementById('inLocation').value.trim();
-        // 修正后的验证条件
-        if ((type === 'in' && (!name || !time || !quantity || !person || !location)) 
-        || (type === 'out' && (!name || !time || !quantity || !person))) {
-            alert('请填写完整的入库信息！');
-            return;
-        }
-        var record = {
-            id: Date.now().toString(),
-            name: name,
-            inDate: time,
-            inQuantity: quantity,
-            inPerson: person,
-            outDate: '',
-            outQuantity: '',
-            outPerson: '',
-            totalQuantity: currentTotal + parseInt(quantity), // 修正为累计库存
-            location: location
-        };
-        data.inventory.push(record);
-    } else {
-        var name = document.getElementById('outName').value.trim();
-        var time = document.getElementById('outTime').value;
-        var quantity = document.getElementById('outQuantity').value.trim();
-        var person = document.getElementById('outPerson').value.trim();
-        var location = document.getElementById('outLocation').value.trim();
-        if ((type === 'in' && (!name || !time || !quantity || !person || !location)) || (type === 'out' && (!name || !time || !quantity || !person))) {
-            alert('请填写完整的出库信息！');
-            return;
-        }
-        var currentStock = currentTotal;
-        if (parseInt(quantity) > currentStock) {
-            alert('出库数量不能超过当前库存！');
-            return;
-        }
-        var record = {
-            id: Date.now().toString(),
-            name: name,
-            inDate: '',
-            inQuantity: '',
-            inPerson: '',
-            outDate: time,
-            outQuantity: quantity,
-            outPerson: person,
-            totalQuantity: currentStock - parseInt(quantity), // 修正为扣减库存
-            location: location
-        };
-        data.inventory.push(record);
-    }
-    saveDataToStorage();
-    updateTables();
-    var modal = bootstrap.Modal.getInstance(document.getElementById('inventoryModal'));
-    if (modal) modal.hide();
-}
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.3.0/echarts.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html> 
