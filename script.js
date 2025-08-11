@@ -17,7 +17,9 @@ document.addEventListener('DOMContentLoaded', function() {
     loadDataFromStorage();
     
     // 自动加载CSV文件
-    autoLoadCSVFiles();
+    setTimeout(() => {
+        autoLoadCSVFiles();
+    }, 1000);
     
     // 为标签页切换添加事件监听
     document.querySelectorAll('.nav-link').forEach(tab => {
@@ -241,95 +243,198 @@ function editRecord(id) {
 
 // 更新表格显示
 function updateTables() {
-    const tableIds = {
-        reagents: 'reagentsTable',
-        inventory: 'inventoryTable',
-        equipment: 'equipmentTable',
-        accessories: 'accessoriesTable'
-    };
-
-    Object.keys(tableIds).forEach(type => {
-        const table = document.getElementById(tableIds[type]);
-        if (table) {
-            const tbody = table.querySelector('tbody');
-            tbody.innerHTML = '';
-            
-            data[type].forEach(record => {
-                const tr = document.createElement('tr');
-                let cells = [];
-                
-                switch(type) {
-                    case 'reagents':
-                        cells = [
-                            record.name,
-                            record.brand,
-                            record.specification,
-                            record.purchaseDate,
-                            record.expiryDate,
-                            record.price,
-                            record.location,
-                            record.quantity
-                        ];
-                        break;
-                    case 'inventory':
-                        cells = [
-                            record.name,
-                            record.inDate,
-                            record.inQuantity,
-                            record.inPerson,
-                            record.outDate,
-                            record.outQuantity,
-                            record.outPerson,
-                            record.totalQuantity,
-                            record.location
-                        ];
-                        break;
-                    case 'equipment':
-                        cells = [
-                            record.assetId,
-                            record.name,
-                            record.brand,
-                            record.model,
-                            record.location
-                        ];
-                        break;
-                    case 'accessories':
-                        cells = [
-                            record.equipment,
-                            record.name,
-                            record.quantity,
-                            record.location
-                        ];
-                        break;
-                }
-                
-                // 添加数据单元格
-                cells.forEach(cell => {
-                    const td = document.createElement('td');
-                    td.textContent = cell || '';
-                    tr.appendChild(td);
-                });
-                
-                // 添加操作按钮
-                const actionTd = document.createElement('td');
-                actionTd.className = 'action-buttons';
-                actionTd.innerHTML = `
-                    <button class="btn btn-sm btn-primary" onclick="editRecord('${record.id}')">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger" onclick="deleteRecord('${record.id}')">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                `;
-                tr.appendChild(actionTd);
-                
-                tbody.appendChild(tr);
-            });
-        }
-    });
-
+    // 更新试剂耗材表格
+    updateReagentsTable();
+    
+    // 更新出入库登记表格
+    updateInventoryTable();
+    
+    // 更新仪器设备表格
+    updateEquipmentTable();
+    
+    // 更新仪器配件表格
+    updateAccessoriesTable();
+    
     // 更新图表
     updateCharts();
+}
+
+// 更新试剂耗材表格
+function updateReagentsTable() {
+    const table = document.getElementById('reagentsTable');
+    if (!table) return;
+    
+    const tbody = table.querySelector('tbody');
+    tbody.innerHTML = '';
+    
+    data.reagents.forEach(record => {
+        const tr = document.createElement('tr');
+        
+        // 添加数据单元格
+        const cells = [
+            record.name || '',
+            record.brand || '',
+            record.specification || '',
+            record.purchaseDate || '',
+            record.expiryDate || '',
+            record.price || '',
+            record.location || '',
+            record.quantity || ''
+        ];
+        
+        cells.forEach(cell => {
+            const td = document.createElement('td');
+            td.textContent = cell;
+            tr.appendChild(td);
+        });
+        
+        // 添加操作按钮
+        const actionTd = document.createElement('td');
+        actionTd.className = 'action-buttons';
+        actionTd.innerHTML = `
+            <button class="btn btn-sm btn-primary" onclick="editRecord('${record.id}')">
+                <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="deleteRecord('${record.id}')">
+                <i class="fas fa-trash"></i>
+            </button>
+        `;
+        tr.appendChild(actionTd);
+        
+        tbody.appendChild(tr);
+    });
+}
+
+// 更新出入库登记表格
+function updateInventoryTable() {
+    const table = document.getElementById('inventoryTable');
+    if (!table) return;
+    
+    const tbody = table.querySelector('tbody');
+    tbody.innerHTML = '';
+    
+    data.inventory.forEach(record => {
+        const tr = document.createElement('tr');
+        
+        // 添加数据单元格
+        const cells = [
+            record.name || '',
+            record.inDate || '',
+            record.inQuantity || '',
+            record.inPerson || '',
+            record.outDate || '',
+            record.outQuantity || '',
+            record.outPerson || '',
+            record.totalQuantity || '',
+            record.location || ''
+        ];
+        
+        cells.forEach(cell => {
+            const td = document.createElement('td');
+            td.textContent = cell;
+            tr.appendChild(td);
+        });
+        
+        // 添加操作按钮
+        const actionTd = document.createElement('td');
+        actionTd.className = 'action-buttons';
+        actionTd.innerHTML = `
+            <button class="btn btn-sm btn-primary" onclick="editRecord('${record.id}')">
+                <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="deleteRecord('${record.id}')">
+                <i class="fas fa-trash"></i>
+            </button>
+        `;
+        tr.appendChild(actionTd);
+        
+        tbody.appendChild(tr);
+    });
+}
+
+// 更新仪器设备表格
+function updateEquipmentTable() {
+    const table = document.getElementById('equipmentTable');
+    if (!table) return;
+    
+    const tbody = table.querySelector('tbody');
+    tbody.innerHTML = '';
+    
+    data.equipment.forEach(record => {
+        const tr = document.createElement('tr');
+        
+        // 添加数据单元格
+        const cells = [
+            record.assetId || '',
+            record.name || '',
+            record.brand || '',
+            record.model || '',
+            record.location || ''
+        ];
+        
+        cells.forEach(cell => {
+            const td = document.createElement('td');
+            td.textContent = cell;
+            tr.appendChild(td);
+        });
+        
+        // 添加操作按钮
+        const actionTd = document.createElement('td');
+        actionTd.className = 'action-buttons';
+        actionTd.innerHTML = `
+            <button class="btn btn-sm btn-primary" onclick="editRecord('${record.id}')">
+                <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="deleteRecord('${record.id}')">
+                <i class="fas fa-trash"></i>
+            </button>
+        `;
+        tr.appendChild(actionTd);
+        
+        tbody.appendChild(tr);
+    });
+}
+
+// 更新仪器配件表格
+function updateAccessoriesTable() {
+    const table = document.getElementById('accessoriesTable');
+    if (!table) return;
+    
+    const tbody = table.querySelector('tbody');
+    tbody.innerHTML = '';
+    
+    data.accessories.forEach(record => {
+        const tr = document.createElement('tr');
+        
+        // 添加数据单元格
+        const cells = [
+            record.equipment || '',
+            record.name || '',
+            record.quantity || '',
+            record.location || ''
+        ];
+        
+        cells.forEach(cell => {
+            const td = document.createElement('td');
+            td.textContent = cell;
+            tr.appendChild(td);
+        });
+        
+        // 添加操作按钮
+        const actionTd = document.createElement('td');
+        actionTd.className = 'action-buttons';
+        actionTd.innerHTML = `
+            <button class="btn btn-sm btn-primary" onclick="editRecord('${record.id}')">
+                <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="deleteRecord('${record.id}')">
+                <i class="fas fa-trash"></i>
+            </button>
+        `;
+        tr.appendChild(actionTd);
+        
+        tbody.appendChild(tr);
+    });
 }
 
 // 搜索表格
@@ -375,11 +480,16 @@ function importCSV(type) {
 
 // 解析CSV数据
 function parseCSV(csvText, type) {
+    // 移除可能存在的BOM标记
+    if (csvText.charCodeAt(0) === 0xFEFF) {
+        csvText = csvText.slice(1);
+    }
+    
     const lines = csvText.split('\n');
     const records = [];
     
-    // 跳过标题行
-    let startRow = 2; // 默认从第三行开始（跳过两行标题）
+    // 跳过标题行，从第二行开始加载
+    let startRow = 2;
     
     for (let i = startRow; i < lines.length; i++) {
         if (!lines[i].trim()) continue;
@@ -436,7 +546,15 @@ function parseCSV(csvText, type) {
                 break;
         }
         
-        if (Object.values(record).some(value => value)) {
+        // 检查记录是否包含有效数据
+        const hasValidData = Object.values(record).some((value, index) => {
+            // 跳过id字段的检查
+            if (index === 0) return false;
+            // 检查其他字段是否为空
+            return value && value.trim() !== '';
+        });
+        
+        if (hasValidData) {
             records.push(record);
         }
     }
@@ -541,6 +659,8 @@ function autoLoadCSVFiles() {
         'accessories': './仪器配件.csv'
     };
     
+    console.log('CSV文件路径配置:', csvFiles);
+    
     // 如果在GitHub Pages上，使用完整的URL路径
     if (isGitHubPages) {
         const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '');
@@ -563,13 +683,21 @@ function autoLoadCSVFiles() {
 // 加载单个CSV文件
 function loadCSVFile(type, fileName) {
     console.log(`开始加载CSV文件: ${fileName}`);
-    // 使用fetch API加载CSV文件
-    fetch(fileName)
+    // 使用fetch API加载CSV文件，指定UTF-8编码
+    fetch(fileName, { 
+        headers: { 'Content-Type': 'text/csv; charset=utf-8' },
+        // 添加模式选项以处理CORS
+        mode: 'cors'
+    })
         .then(response => {
             console.log(`收到响应: ${fileName}`, response);
             if (!response.ok) {
                 throw new Error(`无法加载文件: ${fileName}, 状态码: ${response.status} ${response.statusText}`);
             }
+            // 检查内容类型
+            const contentType = response.headers.get('content-type');
+            console.log(`内容类型: ${contentType}`);
+            // 指定UTF-8编码
             return response.text();
         })
         .then(csvData => {
@@ -581,6 +709,7 @@ function loadCSVFile(type, fileName) {
                 console.log(`解析后的记录数量: ${records.length}`, records);
                 // 更新数据
                 data[type] = records;
+                console.log(`更新数据: ${type}`, data[type]);
                 // 保存到localStorage
                 saveDataToStorage();
                 // 更新表格显示
@@ -594,55 +723,90 @@ function loadCSVFile(type, fileName) {
             console.error('加载CSV文件时出错:', error);
             // 显示错误信息给用户
             alert(`加载CSV文件 ${fileName} 时出错: ${error.message}`);
+            
+            // 添加更多错误处理
+            if (error instanceof TypeError && error.message.includes('fetch')) {
+                console.error('这可能是由于CORS策略阻止了文件访问。请确保通过HTTP服务器而不是直接打开HTML文件来访问页面。');
+            }
         });
 }
 
 // 出入库登记模态框切换与保存逻辑
 function showInventoryModal(type) {
+    // 设置操作类型
     document.getElementById('inventoryType').value = type;
+    
     if (type === 'in') {
+        // 入库模式
         document.getElementById('inventoryModalTitle').textContent = '入库登记';
-        document.getElementById('inFormArea').style.display = '';
+        document.getElementById('inFormArea').style.display = 'block';
         document.getElementById('outFormArea').style.display = 'none';
+        
         // 清空入库表单
         document.getElementById('inName').value = '';
         document.getElementById('inTime').value = '';
         document.getElementById('inQuantity').value = '';
         document.getElementById('inPerson').value = '';
         document.getElementById('inLocation').value = '';
+        
+        // 设置默认时间为今天
+        var today = new Date().toISOString().split('T')[0];
+        document.getElementById('inTime').value = today;
+        
     } else {
+        // 出库模式
         document.getElementById('inventoryModalTitle').textContent = '出库登记';
         document.getElementById('inFormArea').style.display = 'none';
-        document.getElementById('outFormArea').style.display = '';
+        document.getElementById('outFormArea').style.display = 'block';
+        
         // 清空出库表单
         document.getElementById('outName').value = '';
         document.getElementById('outTime').value = '';
         document.getElementById('outQuantity').value = '';
         document.getElementById('outPerson').value = '';
         document.getElementById('outLocation').value = '';
+        
+        // 设置默认时间为今天
+        var today = new Date().toISOString().split('T')[0];
+        document.getElementById('outTime').value = today;
     }
+    
     // 显示模态框
     var modal = new bootstrap.Modal(document.getElementById('inventoryModal'));
     modal.show();
 }
 
 function saveInventoryRecord() {
+    // 获取操作类型
     var type = document.getElementById('inventoryType').value;
-    var inventoryRecords = data.inventory.filter(item => item.name === (type === 'in' ? document.getElementById('inName').value.trim() : document.getElementById('outName').value.trim()));
-    var currentTotal = inventoryRecords.reduce((sum, item) => sum + parseInt(item.totalQuantity || 0), 0);
-
+    
     if (type === 'in') {
+        // 入库操作
         var name = document.getElementById('inName').value.trim();
         var time = document.getElementById('inTime').value;
-        var quantity = document.getElementById('inQuantity').value.trim();
+        var quantity = document.getElementById('inQuantity').value;
         var person = document.getElementById('inPerson').value.trim();
         var location = document.getElementById('inLocation').value.trim();
-        // 修正后的验证条件
-        if ((type === 'in' && (!name || !time || !quantity || !person || !location)) 
-        || (type === 'out' && (!name || !time || !quantity || !person))) {
-            alert('请填写完整的入库信息！');
+        
+        // 验证必填字段
+        var missingFields = [];
+        if (!name) missingFields.push('入库名称');
+        if (!time) missingFields.push('入库时间');
+        if (!quantity || isNaN(quantity) || parseInt(quantity) <= 0) missingFields.push('入库数量');
+        if (!person) missingFields.push('入库人');
+        if (!location) missingFields.push('存放位置');
+        
+        if (missingFields.length > 0) {
+            highlightMissingFields(['inName', 'inTime', 'inQuantity', 'inPerson', 'inLocation'], missingFields);
+            alert('请填写以下必填字段：' + missingFields.join('、'));
             return;
         }
+        
+        // 获取该名称的当前库存总量
+        var inventoryRecords = data.inventory.filter(item => item.name === name);
+        var currentTotal = inventoryRecords.reduce((sum, item) => sum + parseInt(item.totalQuantity || 0), 0);
+        
+        // 创建入库记录
         var record = {
             id: Date.now().toString(),
             name: name,
@@ -652,25 +816,44 @@ function saveInventoryRecord() {
             outDate: '',
             outQuantity: '',
             outPerson: '',
-            totalQuantity: currentTotal + parseInt(quantity), // 修正为累计库存
+            totalQuantity: currentTotal + parseInt(quantity),
             location: location
         };
+        
         data.inventory.push(record);
+        
     } else {
+        // 出库操作
         var name = document.getElementById('outName').value.trim();
         var time = document.getElementById('outTime').value;
-        var quantity = document.getElementById('outQuantity').value.trim();
+        var quantity = document.getElementById('outQuantity').value;
         var person = document.getElementById('outPerson').value.trim();
         var location = document.getElementById('outLocation').value.trim();
-        if ((type === 'in' && (!name || !time || !quantity || !person || !location)) || (type === 'out' && (!name || !time || !quantity || !person))) {
-            alert('请填写完整的出库信息！');
+        
+        // 验证必填字段
+        var missingFields = [];
+        if (!name) missingFields.push('出库名称');
+        if (!time) missingFields.push('出库时间');
+        if (!quantity || isNaN(quantity) || parseInt(quantity) <= 0) missingFields.push('出库数量');
+        if (!person) missingFields.push('使用人');
+        
+        if (missingFields.length > 0) {
+            highlightMissingFields(['outName', 'outTime', 'outQuantity', 'outPerson'], missingFields);
+            alert('请填写以下必填字段：' + missingFields.join('、'));
             return;
         }
-        var currentStock = currentTotal;
-        if (parseInt(quantity) > currentStock) {
-            alert('出库数量不能超过当前库存！');
+        
+        // 获取该名称的当前库存总量
+        var inventoryRecords = data.inventory.filter(item => item.name === name);
+        var currentTotal = inventoryRecords.reduce((sum, item) => sum + parseInt(item.totalQuantity || 0), 0);
+        
+        // 检查出库数量是否超过库存
+        if (parseInt(quantity) > currentTotal) {
+            alert('出库数量不能超过当前库存！当前库存：' + currentTotal);
             return;
         }
+        
+        // 创建出库记录
         var record = {
             id: Date.now().toString(),
             name: name,
@@ -680,13 +863,66 @@ function saveInventoryRecord() {
             outDate: time,
             outQuantity: quantity,
             outPerson: person,
-            totalQuantity: currentStock - parseInt(quantity), // 修正为扣减库存
-            location: location
+            totalQuantity: currentTotal - parseInt(quantity),
+            location: location || '未指定'
         };
+        
         data.inventory.push(record);
     }
+    
+    // 保存数据并更新表格
     saveDataToStorage();
     updateTables();
+    
+    // 关闭模态框
     var modal = bootstrap.Modal.getInstance(document.getElementById('inventoryModal'));
     if (modal) modal.hide();
+    
+    // 显示成功消息
+    alert(type === 'in' ? '入库信息保存成功！' : '出库信息保存成功！');
+}
+
+// 高亮显示缺失字段
+function highlightMissingFields(fieldIds, missingFields) {
+    var fieldMap = {
+        '入库名称': 'inName',
+        '入库时间': 'inTime',
+        '入库数量': 'inQuantity',
+        '入库人': 'inPerson',
+        '存放位置': 'inLocation',
+        '出库名称': 'outName',
+        '出库时间': 'outTime',
+        '出库数量': 'outQuantity',
+        '使用人': 'outPerson'
+    };
+    
+    // 清除所有字段的样式
+    fieldIds.forEach(function(fieldId) {
+        var element = document.getElementById(fieldId);
+        if (element) {
+            element.style.border = '';
+            element.style.boxShadow = '';
+        }
+    });
+    
+    // 为缺失字段添加红色边框
+    missingFields.forEach(function(fieldName) {
+        var fieldId = fieldMap[fieldName];
+        if (fieldId) {
+            var fieldElement = document.getElementById(fieldId);
+            if (fieldElement) {
+                fieldElement.style.border = '2px solid #dc3545';
+                fieldElement.style.boxShadow = '0 0 5px rgba(220, 53, 69, 0.5)';
+                // 自动聚焦到第一个缺失字段
+                if (missingFields.indexOf(fieldName) === 0) {
+                    fieldElement.focus();
+                }
+                // 3秒后恢复样式
+                setTimeout(function() {
+                    fieldElement.style.border = '';
+                    fieldElement.style.boxShadow = '';
+                }, 3000);
+            }
+        }
+    });
 }
