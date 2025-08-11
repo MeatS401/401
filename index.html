@@ -1,4 +1,4 @@
-出入库登记、仪器设备统计及仪器配件标签页<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -252,47 +252,47 @@
                         <!-- 入库表单区域 -->
                         <div id="inFormArea">
                             <div class="mb-3">
-                                <label class="form-label">入库名称</label>
-                                <input type="text" class="form-control" id="inName" name="inName">
+                                <label class="form-label">入库名称 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="inName" name="inName" placeholder="请输入物品名称" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">入库时间</label>
-                                <input type="date" class="form-control" id="inTime" name="inTime">
+                                <label class="form-label">入库时间 <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="inTime" name="inTime" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">入库数量</label>
-                                <input type="number" class="form-control" id="inQuantity" name="inQuantity">
+                                <label class="form-label">入库数量 <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="inQuantity" name="inQuantity" placeholder="请输入入库数量" min="1" step="1" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">入库人</label>
-                                <input type="text" class="form-control" id="inPerson" name="inPerson">
+                                <label class="form-label">入库人 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="inPerson" name="inPerson" placeholder="请输入入库人姓名" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">存放位置</label>
-                                <input type="text" class="form-control" id="inLocation" name="inLocation">
+                                <label class="form-label">存放位置 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="inLocation" name="inLocation" placeholder="请输入存放位置" required>
                             </div>
                         </div>
                         <!-- 出库表单区域 -->
                         <div id="outFormArea">
                             <div class="mb-3">
-                                <label class="form-label">出库名称</label>
-                                <input type="text" class="form-control" id="outName" name="outName">
+                                <label class="form-label">出库名称 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="outName" name="outName" placeholder="请输入物品名称" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">出库时间</label>
-                                <input type="date" class="form-control" id="outTime" name="outTime">
+                                <label class="form-label">出库时间 <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="outTime" name="outTime" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">出库数量</label>
-                                <input type="number" class="form-control" id="outQuantity" name="outQuantity">
+                                <label class="form-label">出库数量 <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="outQuantity" name="outQuantity" placeholder="请输入出库数量" min="1" step="1" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">出库人</label>
-                                <input type="text" class="form-control" id="outPerson" name="outPerson">
+                                <label class="form-label">使用人 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="outPerson" name="outPerson" placeholder="请输入使用人姓名" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">存放位置</label>
-                                <input type="text" class="form-control" id="outLocation" name="outLocation">
+                                <input type="text" class="form-control" id="outLocation" name="outLocation" placeholder="请输入存放位置">
                             </div>
                         </div>
                     </form>
@@ -310,4 +310,4 @@
     <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.3.0/echarts.min.js"></script>
     <script src="script.js"></script>
 </body>
-</html> 
+</html>
