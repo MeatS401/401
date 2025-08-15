@@ -653,10 +653,10 @@ function autoLoadCSVFiles() {
     
     // 定义需要自动加载的CSV文件
     let csvFiles = {
-        'reagents': './试剂耗材统计.csv',
-        'inventory': './出入库登记.csv',
-        'equipment': './仪器设备统计.csv',
-        'accessories': './仪器配件.csv'
+        'reagents': './reagent_stats.csv',
+        'inventory': './inventory_records.csv',
+        'equipment': './equipment_stats.csv',
+        'accessories': './equipment_accessories.csv'
     };
     
     console.log('CSV文件路径配置:', csvFiles);
@@ -666,10 +666,10 @@ function autoLoadCSVFiles() {
         const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '');
         console.log('基础URL:', baseUrl);
         csvFiles = {
-            'reagents': baseUrl + '/试剂耗材统计.csv',
-            'inventory': baseUrl + '/出入库登记.csv',
-            'equipment': baseUrl + '/仪器设备统计.csv',
-            'accessories': baseUrl + '/仪器配件.csv'
+            'reagents': baseUrl + '/reagent_stats.csv',
+            'inventory': baseUrl + '/inventory_records.csv',
+            'equipment': baseUrl + '/equipment_stats.csv',
+            'accessories': baseUrl + '/equipment_accessories.csv'
         };
     }
 
